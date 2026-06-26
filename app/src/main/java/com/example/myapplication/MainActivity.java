@@ -1,10 +1,10 @@
 package com.example.myapplication;
 
 import android.os.Bundle;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -12,156 +12,158 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    RecyclerView rcvTasks;
+    RecyclerView rcvInProgress, rcvTaskGroups;
     TaskAdapter taskAdapter;
+    TaskGroupAdapter groupAdapter;
     ArrayList<Task> taskList;
-    TextView tvFilterAll, tvFilterTodo, tvFilterInProgress, tvFilterCompleted, tvEmptyState;
+    ArrayList<TaskGroup> groupList;
     EditText edtSearch;
+    TextView tvFilterAll, tvFilterProgress, tvFilterCompleted;
+    TextView tvUserName, tvBannerPercent;
+    ProgressBar progressBanner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_todaytask);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.today_task_root), (v, insets) -> {
+        setContentView(R.layout.activity_main);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        /// //////////////////
-        FloatingActionButton fabAdd = findViewById(R.id.fab_add_project);
-        fabAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AddProjectActivity.class);
-                startActivity(intent);
-            }
-        });
-        //Tìm id
-        rcvTasks = findViewById(R.id.rcvTasks);
-        tvFilterAll = findViewById(R.id.tvFilterAll);
-        tvFilterTodo = findViewById(R.id.tvFilterTodo);
-        tvFilterInProgress = findViewById(R.id.tvFilterInProgress);
-        tvFilterCompleted = findViewById(R.id.tvFilterCompleted);
+        //Anh xa view
+        rcvInProgress = findViewById(R.id.rcvInProgress);
+        rcvTaskGroups = findViewById(R.id.rcvTaskGroups);
         edtSearch = findViewById(R.id.edtSearch);
-        tvEmptyState = findViewById(R.id.tvEmptyState);
+        tvFilterAll = findViewById(R.id.tvFilterAll);
+        tvFilterProgress = findViewById(R.id.tvFilterProgress);
+        tvFilterCompleted = findViewById(R.id.tvFilterCompleted);
+        tvFilterCompleted = findViewById(R.id.tvFilterCompleted);
 
-        //Tạo ds công việc
-        taskList = new ArrayList<>();
+        // anh xa cho Header
+        tvUserName = findViewById(R.id.tvUserName);
+        tvBannerPercent = findViewById(R.id.tvBannerPercent);
+        progressBanner = findViewById(R.id.progressBanner);
+        String myName = "Cristiano Ronaldo";//Ten vd de dang nhap
+        tvUserName.setText(myName);
 
-        //Đưa dữ liệu lên RecyclerView
-        taskAdapter = new TaskAdapter(taskList);
-        rcvTasks.setLayoutManager(new LinearLayoutManager(this));
-        rcvTasks.setAdapter(taskAdapter);
+        //Cho vd de tinh tien do cong viec hom nay
+        int tongSoViec = 10;
+        int viecDaXong = 6;
 
-        //Kiểm tra danh sách trống
-        if (taskList.isEmpty()) {
-            tvEmptyState.setVisibility(android.view.View.VISIBLE); //"Chưa có cv"
-            rcvTasks.setVisibility(android.view.View.GONE); // Ẩn ds
-        } else {
-            tvEmptyState.setVisibility(android.view.View.GONE);
-            rcvTasks.setVisibility(android.view.View.VISIBLE); // Hiện ds
+        // Neu chua co viec nao thi tien do la 0 de khong bi loi chia cho 0
+        int phanTram = 0;
+        if (tongSoViec > 0) {
+            phanTram = (viecDaXong * 100) / tongSoViec;
         }
 
-        //Nút "tất cả"
+        //Update len UI
+        progressBanner.setProgress(phanTram);
+        tvBannerPercent.setText(phanTram + "%");
+
+        //Khoi tao danh sach rong
+        taskList = new ArrayList<>();
+
+        //Khoi tao danh sach nhom rong
+        groupList = new ArrayList<>();
+
+        //set adapter cuon ngang
+        taskAdapter = new TaskAdapter(taskList);
+        rcvInProgress.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        rcvInProgress.setAdapter(taskAdapter);
+
+        //set adapter cuon doc
+        groupAdapter = new TaskGroupAdapter(groupList);
+        rcvTaskGroups.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        rcvTaskGroups.setAdapter(groupAdapter);
+
+        //xu ly click nut loc
         tvFilterAll.setOnClickListener(v -> {
             taskAdapter.setFilteredList(taskList);
-            setButtonSelected(tvFilterAll);//Sáng nút tất cả
+            setButtonSelected(tvFilterAll);
         });
 
-        //Nút "cần làm"
-        tvFilterTodo.setOnClickListener(v -> {
+        tvFilterProgress.setOnClickListener(v -> {
             ArrayList<Task> filterList = new ArrayList<>();
-            for (Task task : taskList) {
-                if (task.getStatus().equals("Cần làm")) {
-                    filterList.add(task);
+            for (Task t : taskList) {
+                if (t.getStatus().equals("Đang làm")) {
+                    filterList.add(t);
                 }
             }
             taskAdapter.setFilteredList(filterList);
-            setButtonSelected(tvFilterTodo);//Sáng nút cần làm
+            setButtonSelected(tvFilterProgress);
         });
 
-        //Nút "đang làm"
-        tvFilterInProgress.setOnClickListener(v -> {
-            ArrayList<Task> filterList = new ArrayList<>();
-            for (Task task : taskList) {
-                if (task.getStatus().equals("Đang làm")) {
-                    filterList.add(task);
-                }
-            }
-            taskAdapter.setFilteredList(filterList);
-            setButtonSelected(tvFilterInProgress);//Sáng nút đang làm
-        });
-
-        //Nút "đã xong"
         tvFilterCompleted.setOnClickListener(v -> {
             ArrayList<Task> filterList = new ArrayList<>();
-            for (Task task : taskList) {
-                if (task.getStatus().equals("Đã xong")) {
-                    filterList.add(task);
+            for (Task t : taskList) {
+                if (t.getStatus().equals("Đã xong")) {
+                    filterList.add(t);
                 }
             }
             taskAdapter.setFilteredList(filterList);
-            setButtonSelected(tvFilterCompleted);// Sáng nút đã xong
+            setButtonSelected(tvFilterCompleted);
         });
 
-        //Khung tìm kiếm
-        edtSearch.addTextChangedListener(new android.text.TextWatcher() {
+        //xu ly tim kiem bang TextWatcher
+        edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
             public void afterTextChanged(android.text.Editable s) {
-                //Chuyển chữ thành chữ thường dễ so sánh
-                String keyword = s.toString().toLowerCase().trim();
-
-                //Tạo ds chứa cv tìm được
+                //Lay chu ng dung go, chuyen chu thuong, roi bo dau
+                String keyword = removeAccents(s.toString().toLowerCase().trim());
                 ArrayList<Task> searchList = new ArrayList<>();
-
-                //Chạy vòng lặp check ds cv
-                for (Task task : taskList) {
-                    //Nếu tiêu đề công việc đúng như tìm kiếm thì đưa vào danh sách
-                    if (task.getTitle().toLowerCase().contains(keyword)) {
-                        searchList.add(task);
+                for (Task t : taskList) {
+                    //Lay ten task, cung chuyen chu thuong va bo dau
+                    String titleNoAccent = removeAccents(t.getTitle().toLowerCase());
+                    //Dem so sanh 2 cai da bo dau voi nhau
+                    if (titleNoAccent.contains(keyword)) {
+                        searchList.add(t);
                     }
                 }
-
-                //Update lại list để hiện ds tìm kiếm
                 taskAdapter.setFilteredList(searchList);
             }
         });
     }
 
-    //Đổi màu khi nhấn nút
+    //ham doi mau nut
     private void setButtonSelected(TextView selectedBtn) {
-        //Mặc định nút chưa tô màu
+        //dua 3 nut ve mau mac dinh
         tvFilterAll.setBackgroundTintList(androidx.core.content.ContextCompat.getColorStateList(this, R.color.purple_light));
         tvFilterAll.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.purple_primary));
 
-        tvFilterTodo.setBackgroundTintList(androidx.core.content.ContextCompat.getColorStateList(this, R.color.purple_light));
-        tvFilterTodo.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.purple_primary));
-
-        tvFilterInProgress.setBackgroundTintList(androidx.core.content.ContextCompat.getColorStateList(this, R.color.purple_light));
-        tvFilterInProgress.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.purple_primary));
+        tvFilterProgress.setBackgroundTintList(androidx.core.content.ContextCompat.getColorStateList(this, R.color.purple_light));
+        tvFilterProgress.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.purple_primary));
 
         tvFilterCompleted.setBackgroundTintList(androidx.core.content.ContextCompat.getColorStateList(this, R.color.purple_light));
         tvFilterCompleted.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.purple_primary));
-
-        //Set màu khi bấm nút
+        // to mau dam cho nut hien tai
         selectedBtn.setBackgroundTintList(androidx.core.content.ContextCompat.getColorStateList(this, R.color.purple_primary));
         selectedBtn.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.white));
+    }
+
+    // Ham bo dau tieng viet de tim kiem
+    private String removeAccents(String str) {
+        try {
+            String temp = java.text.Normalizer.normalize(str, java.text.Normalizer.Form.NFD);
+            java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+            return pattern.matcher(temp).replaceAll("").replace("đ", "d").replace("Đ", "D");
+        } catch (Exception e) {
+            return str;
+        }
     }
 }
