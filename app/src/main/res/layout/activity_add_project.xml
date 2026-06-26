@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Add Project"
+            android:text="Thêm Dự Án"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -60,7 +60,7 @@
         android:layout_marginBottom="20dp"
         android:background="@drawable/shape_card"
         android:backgroundTint="@color/purple_primary"
-        android:text="Add Project"
+        android:text="Thêm Dự Án"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -90,11 +90,15 @@
                 android:padding="16dp"
                 android:layout_marginBottom="16dp">
 
-                <View
+                <ImageView
+                    android:id="@+id/img_group_icon"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:background="@drawable/shape_status_done"
-                    android:backgroundTint="#FFDEEF" />
+                    android:backgroundTint="#FFDEEF"
+                    android:padding="8dp"
+                    android:src="@drawable/outline_work_24"
+                    app:tint="#FF4081" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -105,13 +109,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Task Group"
+                        android:text="Nhóm Công Việc"
                         android:textColor="@color/grey_text"
                         android:textSize="12sp" />
                     <TextView
+                        android:id="@+id/tv_selected_group"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Work"
+                        android:text="Công Việc"
                         android:textColor="@color/black"
                         android:textSize="16sp"
                         android:textStyle="bold"
@@ -119,6 +124,8 @@
                 </LinearLayout>
 
                 <ImageView
+
+                    android:id="@+id/img_arrow_group"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@android:drawable/arrow_down_float"
@@ -136,14 +143,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Project Name"
+                    android:text="Tên Công Việc"
                     android:textColor="@color/grey_text"
                     android:textSize="12sp" />
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@null"
-                    android:text="Grocery Shopping App"
+                    android:text="Dự án Mobile"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:textStyle="bold"
@@ -162,14 +169,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Description"
+                    android:text="Nội Dung"
                     android:textColor="@color/grey_text"
                     android:textSize="12sp" />
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@null"
-                    android:text="This application is designed for super shops. By using this application they can enlist all their products in one place and can deliver."
+                    android:text="Nội dung công việc ở đây là ...."
                     android:textColor="@color/black"
                     android:textSize="14sp"
                     android:layout_marginTop="6dp"
@@ -179,6 +186,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/layout_start_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/shape_card"
@@ -203,10 +211,11 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Start Date"
+                        android:text="Ngày bắt đầu"
                         android:textColor="@color/grey_text"
                         android:textSize="12sp" />
                     <TextView
+                        android:id="@+id/tv_start_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="01 May, 2022"
@@ -224,6 +233,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/layout_end_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/shape_card"
@@ -247,10 +257,11 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="End Date"
+                        android:text="Ngày kết thúc"
                         android:textColor="@color/grey_text"
                         android:textSize="12sp" />
                     <TextView
+                        android:id="@+id/tv_end_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="30 June, 2022"

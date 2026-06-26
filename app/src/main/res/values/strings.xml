@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">My Application</string>
+
+
+
+    <string-array name="array_task_groups">
+        <item>Công việc</item>
+        <item>Cá nhân</item>
+        <item>Sức khỏe</item>
+        <item>Mua sắm</item>
+    </string-array>
 </resources>
