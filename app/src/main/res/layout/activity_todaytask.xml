@@ -317,6 +317,7 @@
         app:backgroundTint="@color/purple_primary"
         app:layout_anchor="@id/bar"
         app:layout_anchorGravity="center"
+        app:shapeAppearanceOverlay="@style/CircleFAB"
         app:tint="@color/white"
         android:contentDescription="Nút thêm công việc"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
