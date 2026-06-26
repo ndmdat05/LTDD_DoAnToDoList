@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,6 +57,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             holder.tvStatus.setTextColor(Color.parseColor("#3498DB"));
             holder.tvStatus.getBackground().setTint(Color.parseColor("#EBF5FB"));
         }
+
+        // Sự kiện click vào item để sang trang chi tiết
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), DetailTaskActivity.class);
+            intent.putExtra("task_title", task.getTitle());
+            intent.putExtra("task_category", task.getCategory());
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override
