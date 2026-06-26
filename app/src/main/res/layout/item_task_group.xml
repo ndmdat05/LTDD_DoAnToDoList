@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:background="@drawable/shape_card"
+    android:backgroundTint="@color/white"
+    android:padding="16dp"
+    android:elevation="2dp">
+
+    <ImageView
+        android:id="@+id/ivGroupIcon"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:background="@drawable/shape_card"
+        android:backgroundTint="#FCE4EC"
+        android:padding="10dp"
+        android:src="@android:drawable/ic_menu_myplaces"
+        app:tint="#E91E63"
+        android:layout_centerVertical="true"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="16dp"
+        android:layout_toEndOf="@id/ivGroupIcon"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvGroupName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Office Project"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvTaskCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="23 Tasks"
+            android:textColor="@color/grey_text"
+            android:textSize="13sp"
+            android:layout_marginTop="4dp"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvGroupPercent"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/shape_card"
+        android:backgroundTint="#FFF0F5"
+        android:gravity="center"
+        android:text="70%"
+        android:textColor="#E91E63"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>
