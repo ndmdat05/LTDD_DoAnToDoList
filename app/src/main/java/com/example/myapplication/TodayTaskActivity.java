@@ -126,7 +126,12 @@ public class TodayTaskActivity extends AppCompatActivity {
             bottomNavigation.setOnItemSelectedListener(item -> {
                 // Nếu bấm vào icon Trang chủ (Home) thì quay trở lại MainActivity
                 if (item.getItemId() == R.id.nav_home) {
-                    finish();
+                    Intent intent = new Intent(TodayTaskActivity.this, MainActivity.class);
+                    return true;
+                }
+                if (item.getItemId() == R.id.nav_profile){
+                    Intent intent = new Intent(TodayTaskActivity.this, SettingsActivity.class);
+                    startActivity(intent);
                     return true;
                 }
                 return true;
