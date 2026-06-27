@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 public class DetailTaskActivity extends AppCompatActivity {
@@ -22,6 +25,8 @@ public class DetailTaskActivity extends AppCompatActivity {
     private TextView tvTaskCount;
     private CircularProgressIndicator circularProgress;
     private View btnAddSubtask;
+    private BottomNavigationView bottomNavigation;
+    private FloatingActionButton fabAddSubtask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +43,8 @@ public class DetailTaskActivity extends AppCompatActivity {
         tvTaskCount = findViewById(R.id.tvTaskCount);
         circularProgress = findViewById(R.id.circularProgress);
         btnAddSubtask = findViewById(R.id.btn_add_subtask);
+        bottomNavigation = findViewById(R.id.bottom_navigation);
+        fabAddSubtask = findViewById(R.id.fab_add_project);
 
         // Set Task Data from Intent
         String title = getIntent().getStringExtra("task_title");
@@ -50,6 +57,30 @@ public class DetailTaskActivity extends AppCompatActivity {
 
         // Setup Add Subtask Click
         btnAddSubtask.setOnClickListener(v -> showSubtaskDialog("Thêm công việc", "", false, null));
+        fabAddSubtask.setOnClickListener(v -> showSubtaskDialog("Thêm công việc", "", false, null));
+
+        // Setup Bottom Navigation
+        if (bottomNavigation != null) {
+            bottomNavigation.setOnItemSelectedListener(item -> {
+                if (item.getItemId() == R.id.nav_home) {
+                    Intent intent = new Intent(DetailTaskActivity.this, MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                    return true;
+                }
+                if (item.getItemId() == R.id.nav_calendar) {
+                    Intent intent = new Intent(DetailTaskActivity.this, TodayTaskActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
+                if (item.getItemId() == R.id.nav_profile) {
+                    Intent intent = new Intent(DetailTaskActivity.this, SettingsActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
+                return true;
+            });
+        }
 
         // Setup Initial Subtasks
         setupExistingSubtasks();
