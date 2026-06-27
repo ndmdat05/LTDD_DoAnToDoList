@@ -27,6 +27,9 @@
         <activity android:name=".AddProjectActivity" android:exported="false" />
         <activity android:name=".DetailTaskActivity" android:exported="false" />
         <activity android:name=".TodayTaskActivity" android:exported="false" />
+        <activity android:name=".SettingsActivity" android:exported="false" />
+        <activity android:name=".ProfileActivity" android:exported="false" />
+        <activity android:name=".ChangePasswordActivity" android:exported="false" />
     </application>
 
 </manifest>
