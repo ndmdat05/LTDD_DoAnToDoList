@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "239841814217",
+    "project_id": "ltdd-doantodolist",
+    "storage_bucket": "ltdd-doantodolist.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:239841814217:android:dc625a58a9f73821b30f18",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgSUeZNU5AnjtJV4xcm7m2DhLxLCyR00I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
