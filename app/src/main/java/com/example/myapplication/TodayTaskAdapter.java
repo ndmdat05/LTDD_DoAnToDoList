@@ -91,6 +91,14 @@ public class TodayTaskAdapter extends RecyclerView.Adapter<TodayTaskAdapter.Toda
             holder.tvStatusBadge.setTextColor(android.graphics.Color.parseColor("#00B0FF"));
             holder.tvStatusBadge.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#E1F5FE")));
         }
+
+        // Sự kiện nhấn vào item để chuyển sang màn hình chi tiết
+        holder.itemView.setOnClickListener(v -> {
+            android.content.Intent intent = new android.content.Intent(v.getContext(), DetailTaskActivity.class);
+            intent.putExtra("task_title", task.getTitle());
+            intent.putExtra("task_category", task.getCategory());
+            v.getContext().startActivity(intent);
+        });
         // ========================================================================
     }
 
