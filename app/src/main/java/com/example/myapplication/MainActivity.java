@@ -1,5 +1,5 @@
 package com.example.myapplication;
-
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tvFilterAll, tvFilterProgress, tvFilterCompleted;
     TextView tvUserName, tvBannerPercent;
     ProgressBar progressBanner;
-
+    com.google.android.material.bottomnavigation.BottomNavigationView bottomNavigation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
         tvFilterAll = findViewById(R.id.tvFilterAll);
         tvFilterProgress = findViewById(R.id.tvFilterProgress);
         tvFilterCompleted = findViewById(R.id.tvFilterCompleted);
-        tvFilterCompleted = findViewById(R.id.tvFilterCompleted);
-
+       //Ánh xạ thanh điều hướng từ file XML vào Java
+        bottomNavigation = findViewById(R.id.bottom_navigation);
         // anh xa cho Header
         tvUserName = findViewById(R.id.tvUserName);
         tvBannerPercent = findViewById(R.id.tvBannerPercent);
@@ -137,6 +138,17 @@ public class MainActivity extends AppCompatActivity {
                 }
                 taskAdapter.setFilteredList(searchList);
             }
+        });
+        //  Lắng nghe sự kiện bấm nút Lịch (Calendar) trên BottomNav
+        // để mở màn hình TodayTaskActivity của ông lên.
+        // ========================================================================
+        bottomNavigation.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.nav_calendar) {
+                Intent intent = new Intent(MainActivity.this, TodayTaskActivity.class);
+                startActivity(intent);
+                return true;
+            }
+            return true;
         });
     }
 
