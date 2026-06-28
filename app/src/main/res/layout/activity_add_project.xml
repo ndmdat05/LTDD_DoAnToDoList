@@ -147,6 +147,7 @@
                     android:textColor="@color/grey_text"
                     android:textSize="12sp" />
                 <EditText
+                    android:id="@+id/edt_task_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@null"
@@ -173,6 +174,7 @@
                     android:textColor="@color/grey_text"
                     android:textSize="12sp" />
                 <EditText
+                    android:id="@+id/edt_task_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@null"
