@@ -6,6 +6,9 @@ public class Task {
     private int progress;
     private String status;
 
+    public Task() {
+    }
+
     public Task(String category, String title, int progress, String status) {
         this.category = category;
         this.title = title;
