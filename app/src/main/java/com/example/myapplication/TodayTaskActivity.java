@@ -46,23 +46,40 @@ public class TodayTaskActivity extends AppCompatActivity {
         });
         // ========================================================================
 
-        // 2. Đổi mốc thời gian từ chữ sang số int để khớp cú pháp
+        // 2. Khởi tạo cấu trúc và nạp Adapter lên RecyclerView trước
         taskList = new ArrayList<>();
-        // Đổi "Grocery shopping app design" -> "Mua sắm"
-        taskList.add(new Task("Mua sắm", "Market Research", 10, "Đã xong"));
-        taskList.add(new Task("Mua sắm", "Competitive Analysis", 12, "Đang làm"));
-
-        // Đổi "Uber Eats redesign challange" -> "Cá nhân"
-        taskList.add(new Task("Cá nhân", "Create Low-fidelity Wireframe", 19, "Cần làm"));
-
-        taskList.add(new Task("Công việc", "How to pitch a Design Sprint", 21, "Cần làm"));
-        // 3. Đổ dữ liệu lên RecyclerView động mượt mà bằng Adapter
         taskAdapter = new TodayTaskAdapter(taskList);
         rcvTasks.setLayoutManager(new LinearLayoutManager(this));
         rcvTasks.setAdapter(taskAdapter);
 
-        // Kiểm tra xem có dữ liệu không để ẩn/hiện chữ trạng thái trống
-        checkEmptyState(taskList);
+        // 3. Kết nối mạng trực tuyến Realtime Database dựa theo tài khoản người dùng
+        String currentUserId = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser().getUid();
+        com.google.firebase.database.DatabaseReference databaseRef =
+                com.google.firebase.database.FirebaseDatabase.getInstance().getReference("tasks").child(currentUserId);
+
+        // Cài đặt bộ lắng nghe để tự bốc dữ liệu mềm từ mạng về điện thoại
+        databaseRef.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull com.google.firebase.database.DataSnapshot snapshot) {
+                taskList.clear(); // Xóa dữ liệu cũ tránh trùng lặp việc khi mạng có cập nhật mới
+
+                for (com.google.firebase.database.DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Task task = dataSnapshot.getValue(Task.class);
+                    if (task != null) {
+                        taskList.add(task);
+                    }
+                }
+
+                // Ra lệnh cho Adapter vẽ lại giao diện dựa theo việc thật vừa tải về
+                taskAdapter.setFilteredList(taskList);
+                checkEmptyState(taskList);
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull com.google.firebase.database.DatabaseError error) {
+                android.widget.Toast.makeText(TodayTaskActivity.this, "Lỗi kết nối Firebase: " + error.getMessage(), android.widget.Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // 4. Bấm nút dấu cộng (+) -> Tự động chuyển cảnh sang màn hình Thêm Dự Án
         fabAddProject.setOnClickListener(new View.OnClickListener() {
@@ -126,7 +143,7 @@ public class TodayTaskActivity extends AppCompatActivity {
             bottomNavigation.setOnItemSelectedListener(item -> {
                 // Nếu bấm vào icon Trang chủ (Home) thì quay trở lại MainActivity
                 if (item.getItemId() == R.id.nav_home) {
-                    Intent intent = new Intent(TodayTaskActivity.this, MainActivity.class);
+                    finish();
                     return true;
                 }
                 if (item.getItemId() == R.id.nav_profile){

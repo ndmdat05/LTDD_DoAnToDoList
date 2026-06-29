@@ -1,4 +1,5 @@
 package com.example.myapplication;
+
 import android.app.DatePickerDialog;
 import android.widget.LinearLayout;
 import java.util.Calendar;
@@ -7,10 +8,12 @@ import android.view.View;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.widget.TextView;
+import android.widget.EditText;
+import android.widget.Button;
+import android.widget.Toast;
 
-public class AddProjectActivity extends  AppCompatActivity {
+public class AddProjectActivity extends AppCompatActivity {
     @Override
-    // CHÍNH XÁC LÀ DÒNG NÀY ÔNG NHÉ (ĐÃ FIX LỖI TYPO):
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_project);
@@ -25,8 +28,6 @@ public class AddProjectActivity extends  AppCompatActivity {
 
         TextView tvSelectedGroup = findViewById(R.id.tv_selected_group);
         ImageView imgArrowGroup = findViewById(R.id.img_arrow_group);
-
-        // Ánh xạ con ImageView hiển thị Icon nhóm
         ImageView imgGroupIcon = findViewById(R.id.img_group_icon);
 
         imgArrowGroup.setOnClickListener(new View.OnClickListener() {
@@ -70,12 +71,12 @@ public class AddProjectActivity extends  AppCompatActivity {
                 popupMenu.show();
             }
         });
+
         LinearLayout layoutStartDate = findViewById(R.id.layout_start_date);
         TextView tvStartDate = findViewById(R.id.tv_start_date);
         LinearLayout layoutEndDate = findViewById(R.id.layout_end_date);
         TextView tvEndDate = findViewById(R.id.tv_end_date);
 
-        // Bấm vào ô Ngày bắt đầu
         layoutStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,7 +97,6 @@ public class AddProjectActivity extends  AppCompatActivity {
             }
         });
 
-        // Bấm vào ô Ngày kết thúc
         layoutEndDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,7 +116,55 @@ public class AddProjectActivity extends  AppCompatActivity {
                 datePickerDialog.show();
             }
         });
-        // ===================================================
 
-    } // Kết thúc hàm onCreate
-} // Kết thúc class AddProjectActivity
+        // ========================================================================
+        // >>> CHỖ NÀY SỬA: Đã gỡ bỏ lồng nhau, ánh xạ phẳng và chuẩn hóa logic Lưu
+        // ========================================================================
+        // 💡 Nhớ kiểm tra ID ở file XML xem có trùng với "edt_task_title", "edt_task_content", "btn_save_task" không nhé!
+        EditText edtTaskTitle = findViewById(R.id.edt_task_title);
+        EditText edtTaskContent = findViewById(R.id.edt_task_content);
+        Button btnSaveTask = findViewById(R.id.btn_add_project);
+
+        if (btnSaveTask != null) {
+            btnSaveTask.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String title = (edtTaskTitle != null) ? edtTaskTitle.getText().toString().trim() : "";
+                    String content = (edtTaskContent != null) ? edtTaskContent.getText().toString().trim() : "";
+                    String category = tvSelectedGroup.getText().toString();
+                    String startDate = tvStartDate.getText().toString();
+                    String endDate = tvEndDate.getText().toString();
+
+                    if (title.isEmpty()) {
+                        if (edtTaskTitle != null) {
+                            edtTaskTitle.setError("Vui lòng nhập tên công việc!");
+                        }
+                        return;
+                    }
+
+                    com.google.firebase.auth.FirebaseUser user = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser();
+                    if (user == null) {
+                        Toast.makeText(AddProjectActivity.this, "Lỗi: Chưa đăng nhập!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    // 👉 Đã đưa về đúng 4 tham số khớp với Constructor hiện tại của Task để sạch bóng báo đỏ
+                    Task newTask = new Task(category, title, content, 0, "Cần làm", startDate, endDate);
+
+                    com.google.firebase.database.FirebaseDatabase.getInstance("https://ltdd-doantodolist-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                            .getReference("Tasks")
+                            .child(user.getUid())
+                            .push()
+                            .setValue(newTask)
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(AddProjectActivity.this, "Thêm công việc thành công!", Toast.LENGTH_SHORT).show();
+                                finish();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(AddProjectActivity.this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+                }
+            });
+        }
+    }
+}
