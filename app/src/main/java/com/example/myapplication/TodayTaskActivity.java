@@ -58,8 +58,8 @@ public class TodayTaskActivity extends AppCompatActivity {
         //  Kết nối mạng trực tuyến Realtime Database dựa theo tài khoản người dùng
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference databaseRef = FirebaseDatabase.getInstance("https://ltdd-doantodolist-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                        .getReference("Tasks")
-                        .child(currentUserId);
+                .getReference("Tasks")
+                .child(currentUserId);
 
         // Cài đặt bộ lắng nghe để tự bốc dữ liệu mềm từ mạng về điện thoại
         databaseRef.addValueEventListener(new ValueEventListener() {

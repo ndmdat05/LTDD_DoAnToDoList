@@ -48,9 +48,9 @@ public class AddProjectActivity extends AppCompatActivity {
                 }
 
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        String selected = item.getTitle().toString();
-                        tvSelectedGroup.setText(selected);
+                public boolean onMenuItemClick(MenuItem item) {
+                    String selected = item.getTitle().toString();
+                    tvSelectedGroup.setText(selected);
 
                     if (selected.equals("Công việc")) {
                         imgGroupIcon.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFDEEF")));
