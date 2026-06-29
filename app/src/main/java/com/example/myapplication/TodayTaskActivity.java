@@ -9,6 +9,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
+import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class TodayTaskActivity extends AppCompatActivity {
     private RecyclerView rcvTasks;
@@ -17,17 +27,13 @@ public class TodayTaskActivity extends AppCompatActivity {
     private TextView tvFilterAll, tvFilterTodo, tvFilterInProgress, tvFilterCompleted, tvEmptyState;
     private FloatingActionButton fabAddProject;
 
-    // ========================================================================
-    // >>> CHỖ NÀY THÊM: Khai báo biến thanh điều hướng đáy cho màn hình này
-    // ========================================================================
-    com.google.android.material.bottomnavigation.BottomNavigationView bottomNavigation;
-
+    BottomNavigationView bottomNavigation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todaytask);
 
-        // 1. Ánh xạ toàn bộ các View từ XML
+        // Ánh xạ toàn bộ các View từ XML
         rcvTasks = findViewById(R.id.rcvTasks);
         tvFilterAll = findViewById(R.id.tvFilterAll);
         tvFilterTodo = findViewById(R.id.tvFilterTodo);
@@ -36,9 +42,6 @@ public class TodayTaskActivity extends AppCompatActivity {
         tvEmptyState = findViewById(R.id.tvEmptyState);
         fabAddProject = findViewById(R.id.fab_add_project);
 
-        // ========================================================================
-        // >>> CHỖ NÀY THÊM: Ánh xạ thanh điều hướng đáy và nút mũi tên quay lại
-        // ========================================================================
         bottomNavigation = findViewById(R.id.bottom_navigation);
 
         findViewById(R.id.btn_back).setOnClickListener(v -> {
@@ -46,24 +49,25 @@ public class TodayTaskActivity extends AppCompatActivity {
         });
         // ========================================================================
 
-        // 2. Khởi tạo cấu trúc và nạp Adapter lên RecyclerView trước
+        //  Khởi tạo cấu trúc và nạp Adapter lên RecyclerView trước
         taskList = new ArrayList<>();
         taskAdapter = new TodayTaskAdapter(taskList);
         rcvTasks.setLayoutManager(new LinearLayoutManager(this));
         rcvTasks.setAdapter(taskAdapter);
 
-        // 3. Kết nối mạng trực tuyến Realtime Database dựa theo tài khoản người dùng
-        String currentUserId = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser().getUid();
-        com.google.firebase.database.DatabaseReference databaseRef =
-                com.google.firebase.database.FirebaseDatabase.getInstance().getReference("tasks").child(currentUserId);
+        //  Kết nối mạng trực tuyến Realtime Database dựa theo tài khoản người dùng
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance("https://ltdd-doantodolist-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                .getReference("Tasks")
+                .child(currentUserId);
 
         // Cài đặt bộ lắng nghe để tự bốc dữ liệu mềm từ mạng về điện thoại
-        databaseRef.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
+        databaseRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@androidx.annotation.NonNull com.google.firebase.database.DataSnapshot snapshot) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
                 taskList.clear(); // Xóa dữ liệu cũ tránh trùng lặp việc khi mạng có cập nhật mới
 
-                for (com.google.firebase.database.DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Task task = dataSnapshot.getValue(Task.class);
                     if (task != null) {
                         taskList.add(task);
@@ -76,12 +80,11 @@ public class TodayTaskActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(@androidx.annotation.NonNull com.google.firebase.database.DatabaseError error) {
-                android.widget.Toast.makeText(TodayTaskActivity.this, "Lỗi kết nối Firebase: " + error.getMessage(), android.widget.Toast.LENGTH_SHORT).show();
-            }
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(TodayTaskActivity.this, "Lỗi kết nối Firebase: " + error.getMessage(), Toast.LENGTH_SHORT).show();            }
         });
 
-        // 4. Bấm nút dấu cộng (+) -> Tự động chuyển cảnh sang màn hình Thêm Dự Án
+        //  Bấm nút dấu cộng (+) -> Tự động chuyển cảnh sang màn hình Thêm Dự Án
         fabAddProject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,7 +93,7 @@ public class TodayTaskActivity extends AppCompatActivity {
             }
         });
 
-        // 5. Xử lý sự kiện bấm các Tab bộ lọc trạng thái công việc
+        //  Xử lý sự kiện bấm các Tab bộ lọc trạng thái công việc
         tvFilterAll.setOnClickListener(v -> {
             taskAdapter.setFilteredList(taskList);
             setButtonSelected(tvFilterAll);
@@ -133,9 +136,7 @@ public class TodayTaskActivity extends AppCompatActivity {
             checkEmptyState(filterList);
         });
 
-        // ========================================================================
-        // >>> CHỖ NÀY THÊM: Lắng nghe sự kiện thanh đáy để bấm chuyển tab điều hướng
-        // ========================================================================
+
         if (bottomNavigation != null) {
             // Giữ cho icon Lịch (Calendar) luôn sáng đèn khi đang ở màn hình này
             bottomNavigation.setSelectedItemId(R.id.nav_calendar);
@@ -154,7 +155,6 @@ public class TodayTaskActivity extends AppCompatActivity {
                 return true;
             });
         }
-        // ========================================================================
     }
 
     // Hàm kiểm tra ẩn hiện chữ "Chưa có công việc nào!"
@@ -170,16 +170,16 @@ public class TodayTaskActivity extends AppCompatActivity {
 
     // Hàm đổi màu làm sáng nút bộ lọc đang click chọn
     private void setButtonSelected(TextView selectedBtn) {
-        int purplePrimary = androidx.core.content.ContextCompat.getColor(this, R.color.purple_primary);
-        int white = androidx.core.content.ContextCompat.getColor(this, R.color.white);
+        int purplePrimary = ContextCompat.getColor(this, R.color.purple_primary);
+        int white = ContextCompat.getColor(this, R.color.white);
 
         TextView[] buttons = {tvFilterAll, tvFilterTodo, tvFilterInProgress, tvFilterCompleted};
         for (TextView btn : buttons) {
-            btn.setBackgroundTintList(androidx.core.content.ContextCompat.getColorStateList(this, R.color.purple_light));
+            btn.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.purple_light));
             btn.setTextColor(purplePrimary);
         }
 
-        selectedBtn.setBackgroundTintList(androidx.core.content.ContextCompat.getColorStateList(this, R.color.purple_primary));
+        selectedBtn.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.purple_primary));
         selectedBtn.setTextColor(white);
     }
 }

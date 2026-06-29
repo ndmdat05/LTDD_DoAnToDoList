@@ -11,6 +11,14 @@ import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.Toast;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.view.MenuItem;
+import android.widget.DatePicker;
+import androidx.appcompat.widget.PopupMenu;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class AddProjectActivity extends AppCompatActivity {
     @Override
@@ -33,39 +41,37 @@ public class AddProjectActivity extends AppCompatActivity {
         imgArrowGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                androidx.appcompat.widget.PopupMenu popupMenu = new androidx.appcompat.widget.PopupMenu(AddProjectActivity.this, imgArrowGroup);
-
+                PopupMenu popupMenu = new PopupMenu(AddProjectActivity.this, imgArrowGroup);
                 String[] taskGroups = getResources().getStringArray(R.array.array_task_groups);
                 for (String group : taskGroups) {
                     popupMenu.getMenu().add(group);
                 }
 
-                popupMenu.setOnMenuItemClickListener(new androidx.appcompat.widget.PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(android.view.MenuItem item) {
-                        String selected = item.getTitle().toString();
-                        tvSelectedGroup.setText(selected);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {                    @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    String selected = item.getTitle().toString();
+                    tvSelectedGroup.setText(selected);
 
-                        if (selected.equals("Công việc")) {
-                            imgGroupIcon.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#FFDEEF")));
-                            imgGroupIcon.setImageResource(R.drawable.outline_work_24);
-                            imgGroupIcon.setImageTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#FF4081")));
-                        } else if (selected.equals("Cá nhân")) {
-                            imgGroupIcon.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#E0F2FE")));
-                            imgGroupIcon.setImageResource(R.drawable.outline_person_24);
-                            imgGroupIcon.setImageTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#0284C7")));
-                        } else if (selected.equals("Sức khỏe")) {
-                            imgGroupIcon.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#D1F2D9")));
-                            imgGroupIcon.setImageResource(R.drawable.outline_fitness_trackers_24);
-                            imgGroupIcon.setImageTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#16A34A")));
-                        } else if (selected.equals("Mua sắm")) {
-                            imgGroupIcon.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#FEF3C7")));
-                            imgGroupIcon.setImageResource(R.drawable.outline_store_24);
-                            imgGroupIcon.setImageTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#D97706")));
-                        }
-
-                        return true;
+                    if (selected.equals("Công việc")) {
+                        imgGroupIcon.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFDEEF")));
+                        imgGroupIcon.setImageResource(R.drawable.outline_work_24);
+                        imgGroupIcon.setImageTintList(ColorStateList.valueOf(Color.parseColor("#FF4081")));
+                    } else if (selected.equals("Cá nhân")) {
+                        imgGroupIcon.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#E0F2FE")));
+                        imgGroupIcon.setImageResource(R.drawable.outline_person_24);
+                        imgGroupIcon.setImageTintList(ColorStateList.valueOf(Color.parseColor("#0284C7")));
+                    } else if (selected.equals("Sức khỏe")) {
+                        imgGroupIcon.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#D1F2D9")));
+                        imgGroupIcon.setImageResource(R.drawable.outline_fitness_trackers_24);
+                        imgGroupIcon.setImageTintList(ColorStateList.valueOf(Color.parseColor("#16A34A")));
+                    } else if (selected.equals("Mua sắm")) {
+                        imgGroupIcon.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FEF3C7")));
+                        imgGroupIcon.setImageResource(R.drawable.outline_store_24);
+                        imgGroupIcon.setImageTintList(ColorStateList.valueOf(Color.parseColor("#D97706")));
                     }
+
+                    return true;
+                }
                 });
 
                 popupMenu.show();
@@ -88,8 +94,7 @@ public class AddProjectActivity extends AppCompatActivity {
                 DatePickerDialog datePickerDialog = new DatePickerDialog(AddProjectActivity.this,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
-                            public void onDateSet(android.widget.DatePicker view, int year, int month, int dayOfMonth) {
-                                String date = String.format("%02d/%02d/%d", dayOfMonth, (month + 1), year);
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {                                String date = String.format("%02d/%02d/%d", dayOfMonth, (month + 1), year);
                                 tvStartDate.setText(date);
                             }
                         }, year, month, day);
@@ -108,8 +113,7 @@ public class AddProjectActivity extends AppCompatActivity {
                 DatePickerDialog datePickerDialog = new DatePickerDialog(AddProjectActivity.this,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
-                            public void onDateSet(android.widget.DatePicker view, int year, int month, int dayOfMonth) {
-                                String date = String.format("%02d/%02d/%d", dayOfMonth, (month + 1), year);
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {                                String date = String.format("%02d/%02d/%d", dayOfMonth, (month + 1), year);
                                 tvEndDate.setText(date);
                             }
                         }, year, month, day);
@@ -117,10 +121,7 @@ public class AddProjectActivity extends AppCompatActivity {
             }
         });
 
-        // ========================================================================
-        // >>> CHỖ NÀY SỬA: Đã gỡ bỏ lồng nhau, ánh xạ phẳng và chuẩn hóa logic Lưu
-        // ========================================================================
-        // 💡 Nhớ kiểm tra ID ở file XML xem có trùng với "edt_task_title", "edt_task_content", "btn_save_task" không nhé!
+
         EditText edtTaskTitle = findViewById(R.id.edt_task_title);
         EditText edtTaskContent = findViewById(R.id.edt_task_content);
         Button btnSaveTask = findViewById(R.id.btn_add_project);
@@ -141,18 +142,16 @@ public class AddProjectActivity extends AppCompatActivity {
                         }
                         return;
                     }
-
-                    com.google.firebase.auth.FirebaseUser user = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser();
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     if (user == null) {
                         Toast.makeText(AddProjectActivity.this, "Lỗi: Chưa đăng nhập!", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    // 👉 Đã đưa về đúng 4 tham số khớp với Constructor hiện tại của Task để sạch bóng báo đỏ
+                    // Đã đưa về đúng 4 tham số khớp với Constructor hiện tại của Task để sạch bóng báo đỏ
                     Task newTask = new Task(category, title, content, 0, "Cần làm", startDate, endDate);
 
-                    com.google.firebase.database.FirebaseDatabase.getInstance("https://ltdd-doantodolist-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                            .getReference("Tasks")
+                    FirebaseDatabase.getInstance("https://ltdd-doantodolist-default-rtdb.asia-southeast1.firebasedatabase.app/")                            .getReference("Tasks")
                             .child(user.getUid())
                             .push()
                             .setValue(newTask)
