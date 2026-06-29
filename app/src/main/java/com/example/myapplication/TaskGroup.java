@@ -5,6 +5,9 @@ public class TaskGroup {
     private String taskCount;
     private String percent;
 
+    public TaskGroup() {
+    }
+
     public TaskGroup(String groupName, String taskCount, String percent) {
         this.groupName = groupName;
         this.taskCount = taskCount;

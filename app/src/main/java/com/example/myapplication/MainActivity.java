@@ -1,5 +1,6 @@
 package com.example.myapplication;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -29,8 +31,19 @@ public class MainActivity extends AppCompatActivity {
     TextView tvUserName, tvBannerPercent;
     ProgressBar progressBanner;
     com.google.android.material.bottomnavigation.BottomNavigationView bottomNavigation;
+    com.google.firebase.database.DatabaseReference myRefTasks, myRefGroups;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences prefs =
+                getSharedPreferences("SETTING", MODE_PRIVATE);
+
+        boolean isDark =
+                prefs.getBoolean("dark_mode", false);
+
+        AppCompatDelegate.setDefaultNightMode(
+                isDark
+                        ? AppCompatDelegate.MODE_NIGHT_YES
+                        : AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
@@ -54,22 +67,15 @@ public class MainActivity extends AppCompatActivity {
         tvUserName = findViewById(R.id.tvUserName);
         tvBannerPercent = findViewById(R.id.tvBannerPercent);
         progressBanner = findViewById(R.id.progressBanner);
-        String myName = "Cristiano Ronaldo";//Ten vd de dang nhap
-        tvUserName.setText(myName);
 
-        //Cho vd de tinh tien do cong viec hom nay
-        int tongSoViec = 10;
-        int viecDaXong = 6;
-
-        // Neu chua co viec nao thi tien do la 0 de khong bi loi chia cho 0
-        int phanTram = 0;
-        if (tongSoViec > 0) {
-            phanTram = (viecDaXong * 100) / tongSoViec;
+        // Lay thong tin user tu dang nhap
+        com.google.firebase.auth.FirebaseAuth mAuth = com.google.firebase.auth.FirebaseAuth.getInstance();
+        com.google.firebase.auth.FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            tvUserName.setText(currentUser.getEmail());
+        } else {
+            tvUserName.setText("Khách");
         }
-
-        //Update len UI
-        progressBanner.setProgress(phanTram);
-        tvBannerPercent.setText(phanTram + "%");
 
         //Khoi tao danh sach rong
         taskList = new ArrayList<>();
@@ -86,6 +92,60 @@ public class MainActivity extends AppCompatActivity {
         groupAdapter = new TaskGroupAdapter(groupList);
         rcvTaskGroups.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         rcvTaskGroups.setAdapter(groupAdapter);
+
+        //Danh sach cv (Tasks)
+        myRefTasks = com.google.firebase.database.FirebaseDatabase.getInstance("https://ltdd-doantodolist-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("Tasks");
+        myRefTasks.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull com.google.firebase.database.DataSnapshot snapshot) {
+                taskList.clear();
+                int demViecDaXong = 0;
+
+                for (com.google.firebase.database.DataSnapshot data : snapshot.getChildren()) {
+                    Task task = data.getValue(Task.class);
+                    if (task != null) {
+                        taskList.add(task);
+                        if ("Đã xong".equals(task.getStatus())) {
+                            demViecDaXong++;
+                        }
+                    }
+                }
+                taskAdapter.notifyDataSetChanged();
+
+                //Phan tram tien do
+                int tongSoViec = taskList.size();
+                int phanTram = 0;
+                if (tongSoViec > 0) {
+                    phanTram = (demViecDaXong * 100) / tongSoViec;
+                }
+                progressBanner.setProgress(phanTram);
+                tvBannerPercent.setText(phanTram + "%");
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull com.google.firebase.database.DatabaseError error) {
+            }
+        });
+
+        //Danh sach nhom cv (TaskGroups)
+        myRefGroups = com.google.firebase.database.FirebaseDatabase.getInstance("https://ltdd-doantodolist-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("TaskGroups");
+        myRefGroups.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull com.google.firebase.database.DataSnapshot snapshot) {
+                groupList.clear();
+                for (com.google.firebase.database.DataSnapshot data : snapshot.getChildren()) {
+                    TaskGroup group = data.getValue(TaskGroup.class);
+                    if (group != null) {
+                        groupList.add(group);
+                    }
+                }
+                groupAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull com.google.firebase.database.DatabaseError error) {
+            }
+        });
 
         //xu ly click nut loc
         tvFilterAll.setOnClickListener(v -> {
