@@ -41,6 +41,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.tvCategory.setText(task.getCategory());
         holder.tvTitle.setText(task.getTitle());
         holder.progressBar.setProgress(task.getProgress());
+
+        // Chuyen sang man hinh chi tiet khi click
+        holder.itemView.setOnClickListener(v -> {
+            android.content.Intent intent = new android.content.Intent(v.getContext(), DetailTaskActivity.class);
+            intent.putExtra("task_id", task.getId());
+            intent.putExtra("task_title", task.getTitle());
+            intent.putExtra("task_category", task.getCategory());
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override
