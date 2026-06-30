@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import java.util.Calendar;
 
 public class TodayTaskActivity extends AppCompatActivity {
     private RecyclerView rcvTasks;
@@ -154,6 +155,32 @@ public class TodayTaskActivity extends AppCompatActivity {
                 }
                 return true;
             });
+        }
+        setupDynamicWeekCalendar();
+    }
+
+    private void setupDynamicWeekCalendar() {
+        int[] monthIds = {R.id.tv_week_month_1, R.id.tv_week_month_2, R.id.tv_week_month_3, R.id.tv_week_month_4, R.id.tv_week_month_5};
+        int[] dateIds = {R.id.tv_week_date_1, R.id.tv_week_date_2, R.id.tv_week_date_3, R.id.tv_week_date_4, R.id.tv_week_date_5};
+        int[] dayIds = {R.id.tv_week_day_1, R.id.tv_week_day_2, R.id.tv_week_day_3, R.id.tv_week_day_4, R.id.tv_week_day_5};
+        String[] dayNames = {"CN", "T2", "T3", "T4", "T5", "T6", "T7"};
+        for (int i = 0; i < 5; i++) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_YEAR, i - 2);
+            TextView tvMonth = findViewById(monthIds[i]);
+            TextView tvDate = findViewById(dateIds[i]);
+            TextView tvDay = findViewById(dayIds[i]);
+
+            if (tvMonth != null) {
+                tvMonth.setText("Th" + (calendar.get(Calendar.MONTH) + 1));
+            }
+            if (tvDate != null) {
+                tvDate.setText(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
+            }
+            if (tvDay != null) {
+                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK); // 1: Chủ Nhật, 2: Thứ Hai...
+                tvDay.setText(dayNames[dayOfWeek - 1]);
+            }
         }
     }
 
