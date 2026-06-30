@@ -76,6 +76,11 @@ public class SettingsActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(v ->
                 startActivity(new Intent(
                         this, RegisterActivity.class)));
+
+        findViewById(R.id.fab_add_project).setOnClickListener(v -> {
+            Intent intent = new Intent(SettingsActivity.this, AddProjectActivity.class);
+            startActivity(intent);
+        });
     }
 
     @Override

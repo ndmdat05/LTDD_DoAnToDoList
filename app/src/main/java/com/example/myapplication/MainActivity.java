@@ -221,7 +221,14 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
             return true;
+
         });
+        findViewById(R.id.fab_add_project).setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AddProjectActivity.class);
+            startActivity(intent);
+        });
+
+
     }
 
     //ham doi mau nut
