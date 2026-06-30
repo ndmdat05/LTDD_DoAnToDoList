@@ -107,13 +107,13 @@ public class MainActivity extends AppCompatActivity {
                     taskList.clear();
                     int demViecDaXong = 0;
 
-                    for (com.google.firebase.database.DataSnapshot data : snapshot.getChildren()) {
-                        Task task = data.getValue(Task.class);
-                        if (task != null) {
-                            taskList.add(task);
-                            if ("Đã xong".equals(task.getStatus())) {
-                                demViecDaXong++;
-                            }
+                for (com.google.firebase.database.DataSnapshot data : snapshot.getChildren()) {
+                    Task task = data.getValue(Task.class);
+                    if (task != null) {
+                        task.setId(data.getKey()); // Gán ID từ Firebase key
+                        taskList.add(task);
+                        if ("Đã xong".equals(task.getStatus())) {
+                            demViecDaXong++;
                         }
                     }
                     taskAdapter.notifyDataSetChanged();

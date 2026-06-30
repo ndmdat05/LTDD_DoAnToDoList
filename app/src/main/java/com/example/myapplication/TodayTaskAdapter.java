@@ -95,6 +95,7 @@ public class TodayTaskAdapter extends RecyclerView.Adapter<TodayTaskAdapter.Toda
         // Sự kiện nhấn vào item để chuyển sang màn hình chi tiết
         holder.itemView.setOnClickListener(v -> {
             android.content.Intent intent = new android.content.Intent(v.getContext(), DetailTaskActivity.class);
+            intent.putExtra("task_id", task.getId());
             intent.putExtra("task_title", task.getTitle());
             intent.putExtra("task_category", task.getCategory());
             v.getContext().startActivity(intent);
