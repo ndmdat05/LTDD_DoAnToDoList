@@ -72,12 +72,7 @@ public class MainActivity extends AppCompatActivity {
         com.google.firebase.auth.FirebaseAuth mAuth = com.google.firebase.auth.FirebaseAuth.getInstance();
         com.google.firebase.auth.FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            String name = currentUser.getDisplayName();
-            if (name != null && !name.isEmpty()) {
-                tvUserName.setText(name);
-            } else {
-                tvUserName.setText("Người dùng");
-            }
+            tvUserName.setText(currentUser.getEmail());
         } else {
             tvUserName.setText("Khách");
         }
@@ -99,13 +94,12 @@ public class MainActivity extends AppCompatActivity {
         rcvTaskGroups.setAdapter(groupAdapter);
 
         //Danh sach cv (Tasks)
-        if (currentUser != null) {
-            myRefTasks = com.google.firebase.database.FirebaseDatabase.getInstance("https://ltdd-doantodolist-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("Tasks").child(currentUser.getUid());
-            myRefTasks.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
-                @Override
-                public void onDataChange(@androidx.annotation.NonNull com.google.firebase.database.DataSnapshot snapshot) {
-                    taskList.clear();
-                    int demViecDaXong = 0;
+        myRefTasks = com.google.firebase.database.FirebaseDatabase.getInstance("https://ltdd-doantodolist-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("Tasks");
+        myRefTasks.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull com.google.firebase.database.DataSnapshot snapshot) {
+                taskList.clear();
+                int demViecDaXong = 0;
 
                 for (com.google.firebase.database.DataSnapshot data : snapshot.getChildren()) {
                     Task task = data.getValue(Task.class);
@@ -116,23 +110,23 @@ public class MainActivity extends AppCompatActivity {
                             demViecDaXong++;
                         }
                     }
-                    taskAdapter.notifyDataSetChanged();
-
-                    //Phan tram tien do
-                    int tongSoViec = taskList.size();
-                    int phanTram = 0;
-                    if (tongSoViec > 0) {
-                        phanTram = (demViecDaXong * 100) / tongSoViec;
-                    }
-                    progressBanner.setProgress(phanTram);
-                    tvBannerPercent.setText(phanTram + "%");
                 }
+                taskAdapter.notifyDataSetChanged();
 
-                @Override
-                public void onCancelled(@androidx.annotation.NonNull com.google.firebase.database.DatabaseError error) {
+                //Phan tram tien do
+                int tongSoViec = taskList.size();
+                int phanTram = 0;
+                if (tongSoViec > 0) {
+                    phanTram = (demViecDaXong * 100) / tongSoViec;
                 }
-            });
-        }
+                progressBanner.setProgress(phanTram);
+                tvBannerPercent.setText(phanTram + "%");
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull com.google.firebase.database.DatabaseError error) {
+            }
+        });
 
         //Danh sach nhom cv (TaskGroups)
         myRefGroups = com.google.firebase.database.FirebaseDatabase.getInstance("https://ltdd-doantodolist-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("TaskGroups");
@@ -221,14 +215,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
             return true;
-
         });
-        findViewById(R.id.fab_add_project).setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, AddProjectActivity.class);
-            startActivity(intent);
-        });
-
-
     }
 
     //ham doi mau nut
