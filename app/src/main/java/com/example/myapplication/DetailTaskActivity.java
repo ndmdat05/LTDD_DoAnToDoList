@@ -98,7 +98,12 @@ public class DetailTaskActivity extends AppCompatActivity {
                 .child(userId)
                 .child(taskId);
 
-        ivBack.setOnClickListener(v -> finish());
+        ivBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         // Setup Add Subtask Click
         btnAddSubtask.setOnClickListener(v -> showSubtaskDialog("Thêm công việc", "", false, null));

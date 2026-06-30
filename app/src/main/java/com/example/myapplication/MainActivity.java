@@ -71,8 +71,10 @@ public class MainActivity extends AppCompatActivity {
         // Lay thong tin user tu dang nhap
         com.google.firebase.auth.FirebaseAuth mAuth = com.google.firebase.auth.FirebaseAuth.getInstance();
         com.google.firebase.auth.FirebaseUser currentUser = mAuth.getCurrentUser();
+        String userId = "";
         if (currentUser != null) {
             tvUserName.setText(currentUser.getEmail());
+            userId = currentUser.getUid();
         } else {
             tvUserName.setText("Khách");
         }
@@ -94,39 +96,43 @@ public class MainActivity extends AppCompatActivity {
         rcvTaskGroups.setAdapter(groupAdapter);
 
         //Danh sach cv (Tasks)
-        myRefTasks = com.google.firebase.database.FirebaseDatabase.getInstance("https://ltdd-doantodolist-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("Tasks");
-        myRefTasks.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
-            @Override
-            public void onDataChange(@androidx.annotation.NonNull com.google.firebase.database.DataSnapshot snapshot) {
-                taskList.clear();
-                int demViecDaXong = 0;
+        if (!userId.isEmpty()) {
+            myRefTasks = com.google.firebase.database.FirebaseDatabase.getInstance("https://ltdd-doantodolist-default-rtdb.asia-southeast1.firebasedatabase.app")
+                    .getReference("Tasks")
+                    .child(userId);
+            myRefTasks.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
+                @Override
+                public void onDataChange(@androidx.annotation.NonNull com.google.firebase.database.DataSnapshot snapshot) {
+                    taskList.clear();
+                    int demViecDaXong = 0;
 
-                for (com.google.firebase.database.DataSnapshot data : snapshot.getChildren()) {
-                    Task task = data.getValue(Task.class);
-                    if (task != null) {
-                        task.setId(data.getKey()); // Gán ID từ Firebase key
-                        taskList.add(task);
-                        if ("Đã xong".equals(task.getStatus())) {
-                            demViecDaXong++;
+                    for (com.google.firebase.database.DataSnapshot data : snapshot.getChildren()) {
+                        Task task = data.getValue(Task.class);
+                        if (task != null) {
+                            task.setId(data.getKey()); // Gán ID từ Firebase key
+                            taskList.add(task);
+                            if ("Đã xong".equals(task.getStatus())) {
+                                demViecDaXong++;
+                            }
                         }
                     }
-                }
-                taskAdapter.notifyDataSetChanged();
+                    taskAdapter.notifyDataSetChanged();
 
-                //Phan tram tien do
-                int tongSoViec = taskList.size();
-                int phanTram = 0;
-                if (tongSoViec > 0) {
-                    phanTram = (demViecDaXong * 100) / tongSoViec;
+                    //Phan tram tien do
+                    int tongSoViec = taskList.size();
+                    int phanTram = 0;
+                    if (tongSoViec > 0) {
+                        phanTram = (demViecDaXong * 100) / tongSoViec;
+                    }
+                    progressBanner.setProgress(phanTram);
+                    tvBannerPercent.setText(phanTram + "%");
                 }
-                progressBanner.setProgress(phanTram);
-                tvBannerPercent.setText(phanTram + "%");
-            }
 
-            @Override
-            public void onCancelled(@androidx.annotation.NonNull com.google.firebase.database.DatabaseError error) {
-            }
-        });
+                @Override
+                public void onCancelled(@androidx.annotation.NonNull com.google.firebase.database.DatabaseError error) {
+                }
+            });
+        }
 
         //Danh sach nhom cv (TaskGroups)
         myRefGroups = com.google.firebase.database.FirebaseDatabase.getInstance("https://ltdd-doantodolist-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("TaskGroups");
@@ -157,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
         tvFilterProgress.setOnClickListener(v -> {
             ArrayList<Task> filterList = new ArrayList<>();
             for (Task t : taskList) {
-                if (t.getStatus().equals("Đang làm")) {
+                if (t.getStatus() != null && t.getStatus().equals("Đang làm")) {
                     filterList.add(t);
                 }
             }
@@ -168,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
         tvFilterCompleted.setOnClickListener(v -> {
             ArrayList<Task> filterList = new ArrayList<>();
             for (Task t : taskList) {
-                if (t.getStatus().equals("Đã xong")) {
+                if (t.getStatus() != null && t.getStatus().equals("Đã xong")) {
                     filterList.add(t);
                 }
             }
