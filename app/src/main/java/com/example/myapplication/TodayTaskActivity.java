@@ -70,6 +70,7 @@ public class TodayTaskActivity extends AppCompatActivity {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Task task = dataSnapshot.getValue(Task.class);
                     if (task != null) {
+                        task.setId(dataSnapshot.getKey()); // Gán ID từ Firebase key
                         taskList.add(task);
                     }
                 }

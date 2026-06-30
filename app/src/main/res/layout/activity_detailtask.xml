@@ -144,9 +144,10 @@
                                 android:textSize="10sp" />
 
                             <TextView
+                                android:id="@+id/tvStartDateDetail"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="23 May, 2024"
+                                android:text="--/--/----"
                                 android:textColor="@color/black"
                                 android:textSize="12sp"
                                 android:textStyle="bold" />
@@ -182,9 +183,10 @@
                                 android:textSize="10sp" />
 
                             <TextView
+                                android:id="@+id/tvEndDateDetail"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="30 June, 2024"
+                                android:text="--/--/----"
                                 android:textColor="@color/black"
                                 android:textSize="12sp"
                                 android:textStyle="bold" />
@@ -195,10 +197,11 @@
 
             <!-- Subtasks Section -->
             <TextView
+                android:id="@+id/tvSubtaskLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Danh sách công việc (6)"
+                android:text="Danh sách công việc (0)"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -309,6 +312,20 @@
                     app:indicatorColor="@color/purple_primary"
                     app:trackColor="@color/purple_light" />
             </LinearLayout>
+
+            <!-- Complete Button (Visible only at 100%) -->
+            <Button
+                android:id="@+id/btnCompleteTask"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
+                android:backgroundTint="@color/purple_primary"
+                android:text="Hoàn thành công việc"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:cornerRadius="12dp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
