@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.widget.LinearLayout;
 import java.util.Calendar;
 import android.os.Bundle;
@@ -125,6 +126,15 @@ public class AddProjectActivity extends AppCompatActivity {
         EditText edtTaskTitle = findViewById(R.id.edt_task_title);
         EditText edtTaskContent = findViewById(R.id.edt_task_content);
         Button btnSaveTask = findViewById(R.id.btn_add_project);
+        View btnBell = findViewById(R.id.btn_bell);
+
+        if (btnBell != null) {
+            btnBell.setOnClickListener(v -> {
+                Intent intent = new Intent(AddProjectActivity.this, TodayTaskActivity.class);
+                intent.putExtra("filter_type", "Cần làm");
+                startActivity(intent);
+            });
+        }
 
         if (btnSaveTask != null) {
             btnSaveTask.setOnClickListener(new View.OnClickListener() {

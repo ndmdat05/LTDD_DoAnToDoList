@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -103,39 +104,18 @@ public class TodayTaskActivity extends AppCompatActivity {
         });
 
         tvFilterTodo.setOnClickListener(v -> {
-            ArrayList<Task> filterList = new ArrayList<>();
-            for (Task task : taskList) {
-                if (task.getStatus().equals("Cần làm")) {
-                    filterList.add(task);
-                }
-            }
-            taskAdapter.setFilteredList(filterList);
+            filterTasksByStatus("Cần làm");
             setButtonSelected(tvFilterTodo);
-            checkEmptyState(filterList);
         });
 
         tvFilterInProgress.setOnClickListener(v -> {
-            ArrayList<Task> filterList = new ArrayList<>();
-            for (Task task : taskList) {
-                if (task.getStatus().equals("Đang làm")) {
-                    filterList.add(task);
-                }
-            }
-            taskAdapter.setFilteredList(filterList);
+            filterTasksByStatus("Đang làm");
             setButtonSelected(tvFilterInProgress);
-            checkEmptyState(filterList);
         });
 
         tvFilterCompleted.setOnClickListener(v -> {
-            ArrayList<Task> filterList = new ArrayList<>();
-            for (Task task : taskList) {
-                if (task.getStatus().equals("Đã xong")) {
-                    filterList.add(task);
-                }
-            }
-            taskAdapter.setFilteredList(filterList);
+            filterTasksByStatus("Đã xong");
             setButtonSelected(tvFilterCompleted);
-            checkEmptyState(filterList);
         });
 
 
@@ -159,6 +139,46 @@ public class TodayTaskActivity extends AppCompatActivity {
             });
         }
         setupDynamicWeekCalendar();
+
+        View btnBell = findViewById(R.id.btn_bell);
+        if (btnBell != null) {
+            btnBell.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Tải lại dữ liệu và lọc "Cần làm"
+                    filterTasksByStatus("Cần làm");
+                    setButtonSelected(tvFilterTodo);
+                    Toast.makeText(TodayTaskActivity.this, "Đang xem danh sách việc cần làm", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        // Handle Intent Filter
+        String filterType = getIntent().getStringExtra("filter_type");
+        if (filterType != null && filterType.equals("Cần làm")) {
+            // Chúng ta cần đợi dữ liệu từ Firebase load xong mới lọc được
+            // Tuy nhiên, có thể dùng một listener tạm thời
+            databaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    filterTasksByStatus("Cần làm");
+                    setButtonSelected(tvFilterTodo);
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {}
+            });
+        }
+    }
+
+    private void filterTasksByStatus(String status) {
+        ArrayList<Task> filterList = new ArrayList<>();
+        for (Task task : taskList) {
+            if (task.getStatus() != null && task.getStatus().equals(status)) {
+                filterList.add(task);
+            }
+        }
+        taskAdapter.setFilteredList(filterList);
+        checkEmptyState(filterList);
     }
 
     private void setupDynamicWeekCalendar() {

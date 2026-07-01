@@ -4,7 +4,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -60,6 +62,19 @@ public class MainActivity extends AppCompatActivity {
         tvUserName = findViewById(R.id.tvUserName);
         tvBannerPercent = findViewById(R.id.tvBannerPercent);
         progressBanner = findViewById(R.id.progressBanner);
+        View btnBell = findViewById(R.id.btn_bell);
+
+        // Bell click navigation
+        if (btnBell != null) {
+            btnBell.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MainActivity.this, TodayTaskActivity.class);
+                    intent.putExtra("filter_type", "Cần làm");
+                    startActivity(intent);
+                }
+            });
+        }
 
         // Lay thong tin user tu dang nhap
         com.google.firebase.auth.FirebaseAuth mAuth = com.google.firebase.auth.FirebaseAuth.getInstance();
