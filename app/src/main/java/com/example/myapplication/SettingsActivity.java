@@ -9,6 +9,7 @@ import android.widget.*;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -22,7 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 public class SettingsActivity extends AppCompatActivity {
     private TextView tvName, tvEmail;
     private LinearLayout layoutProfile, layoutPassword;
-    private Switch switchTheme;
+    private SwitchCompat switchTheme;
     private Button btnLogout;
     private LinearLayout layoutLoggedIn, layoutGuest;
     private Button btnLogin, btnRegister;
@@ -58,13 +59,13 @@ public class SettingsActivity extends AppCompatActivity {
         bottomNavigation.setSelectedItemId(R.id.nav_profile);
         bottomNavigation.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.nav_home) {
-                Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
-                startActivity(intent);
+                finish();
                 return true;
             }
             if (item.getItemId() == R.id.nav_calendar) {
                 Intent intent = new Intent(SettingsActivity.this, TodayTaskActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             }
             return true;

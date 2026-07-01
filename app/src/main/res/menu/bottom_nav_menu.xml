@@ -11,17 +11,6 @@
         android:icon="@drawable/outline_calendar_today_25"
         android:title="Calendar" />
 
-    <!-- Giữ nguyên ô trống này để chừa không gian né con nút dấu cộng FAB -->
-    <item
-        android:id="@+id/nav_placeholder"
-        android:title=""
-        android:enabled="false"/>
-
-    <item
-        android:id="@+id/nav_files"
-        android:icon="@drawable/outline_notes_25"
-        android:title="Files" />
-
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/outline_user_attributes_25"

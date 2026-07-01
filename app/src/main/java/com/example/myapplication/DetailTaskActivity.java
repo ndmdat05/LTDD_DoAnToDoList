@@ -113,19 +113,19 @@ public class DetailTaskActivity extends AppCompatActivity {
         if (bottomNavigation != null) {
             bottomNavigation.setOnItemSelectedListener(item -> {
                 if (item.getItemId() == R.id.nav_home) {
-                    Intent intent = new Intent(DetailTaskActivity.this, MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(intent);
+                    finish();
                     return true;
                 }
                 if (item.getItemId() == R.id.nav_calendar) {
                     Intent intent = new Intent(DetailTaskActivity.this, TodayTaskActivity.class);
                     startActivity(intent);
+                    finish();
                     return true;
                 }
                 if (item.getItemId() == R.id.nav_profile) {
                     Intent intent = new Intent(DetailTaskActivity.this, SettingsActivity.class);
                     startActivity(intent);
+                    finish();
                     return true;
                 }
                 return true;

@@ -45,14 +45,7 @@ public class MainActivity extends AppCompatActivity {
                         ? AppCompatDelegate.MODE_NIGHT_YES
                         : AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
         //Anh xa view
         rcvInProgress = findViewById(R.id.rcvInProgress);
@@ -73,7 +66,12 @@ public class MainActivity extends AppCompatActivity {
         com.google.firebase.auth.FirebaseUser currentUser = mAuth.getCurrentUser();
         String userId = "";
         if (currentUser != null) {
-            tvUserName.setText(currentUser.getEmail());
+            String name = currentUser.getDisplayName();
+            if (name != null && !name.isEmpty()) {
+                tvUserName.setText(name);
+            } else {
+                tvUserName.setText("Người dùng");
+            }
             userId = currentUser.getUid();
         } else {
             tvUserName.setText("Khách");
@@ -209,7 +207,11 @@ public class MainActivity extends AppCompatActivity {
         //  Lắng nghe sự kiện bấm nút Lịch (Calendar) trên BottomNav
         // để mở màn hình TodayTaskActivity của ông lên.
         // ========================================================================
+        bottomNavigation.setSelectedItemId(R.id.nav_home);
         bottomNavigation.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.nav_home) {
+                return true;
+            }
             if (item.getItemId() == R.id.nav_calendar) {
                 Intent intent = new Intent(MainActivity.this, TodayTaskActivity.class);
                 startActivity(intent);
@@ -222,6 +224,20 @@ public class MainActivity extends AppCompatActivity {
             }
             return true;
         });
+
+        //  Xử lý sự kiện bấm nút Dấu cộng (+) -> Chuyển sang màn hình Thêm Dự Án
+        findViewById(R.id.fab_add_project).setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AddProjectActivity.class);
+            startActivity(intent);
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (bottomNavigation != null) {
+            bottomNavigation.setSelectedItemId(R.id.nav_home);
+        }
     }
 
     //ham doi mau nut
