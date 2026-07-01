@@ -70,6 +70,15 @@ public class DetailTaskActivity extends AppCompatActivity {
         btnAddSubtask = findViewById(R.id.btn_add_subtask);
         bottomNavigation = findViewById(R.id.bottom_navigation);
         fabAddSubtask = findViewById(R.id.fab_add_project);
+        ImageView btnBell = findViewById(R.id.btn_bell);
+
+        if (btnBell != null) {
+            btnBell.setOnClickListener(v -> {
+                Intent intent = new Intent(DetailTaskActivity.this, TodayTaskActivity.class);
+                intent.putExtra("filter_type", "Cần làm");
+                startActivity(intent);
+            });
+        }
 
         // Get Task ID from Intent
         taskId = getIntent().getStringExtra("task_id");

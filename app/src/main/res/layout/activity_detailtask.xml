@@ -42,11 +42,14 @@
                     android:textStyle="bold" />
 
                 <ImageView
+                    android:id="@+id/btn_bell"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_alignParentEnd="true"
-                    android:src="@android:drawable/ic_popup_reminder"
-                    app:tint="@color/purple_primary" />
+                    android:src="@drawable/ic_bell_normal"
+                    app:tint="@color/purple_primary"
+                    android:clickable="true"
+                    android:focusable="true"/>
             </RelativeLayout>
 
             <!-- Main Task Card -->
