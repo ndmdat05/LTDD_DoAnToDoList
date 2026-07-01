@@ -10,7 +10,9 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#F5F7FA">
+        android:background="#F5F7FA"
+        android:paddingBottom="100dp"
+        android:clipToPadding="false">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -161,7 +163,7 @@
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
-                    <Switch
+                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/switchTheme"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
@@ -236,10 +238,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:backgroundTint="@color/white"
-        app:fabAlignmentMode="center"
-        app:fabCradleMargin="10dp"
-        app:fabCradleRoundedCornerRadius="20dp">
+        app:backgroundTint="@color/white">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
@@ -259,11 +258,12 @@
         android:id="@+id/fab_add_project"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="110dp"
         android:contentDescription="Nút thêm công việc"
         android:src="@android:drawable/ic_input_add"
         app:backgroundTint="@color/purple_primary"
-        app:layout_anchor="@id/bar"
-        app:layout_anchorGravity="center"
         app:shapeAppearanceOverlay="@style/CircleFAB"
         app:tint="@color/white" />
 

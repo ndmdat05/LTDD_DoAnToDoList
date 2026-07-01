@@ -152,6 +152,7 @@ public class TodayTaskActivity extends AppCompatActivity {
                 if (item.getItemId() == R.id.nav_profile){
                     Intent intent = new Intent(TodayTaskActivity.this, SettingsActivity.class);
                     startActivity(intent);
+                    finish();
                     return true;
                 }
                 return true;

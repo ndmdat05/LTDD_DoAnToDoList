@@ -4,10 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F7FA"> <androidx.core.widget.NestedScrollView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="90dp">
+    android:background="#F5F7FA">    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="100dp"
+        android:clipToPadding="false">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -220,10 +221,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:fabAlignmentMode="center"
-        app:backgroundTint="@color/white"
-        app:fabCradleMargin="8dp"
-        app:fabCradleRoundedCornerRadius="20dp">
+        app:backgroundTint="@color/white">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
@@ -238,11 +236,12 @@
         android:id="@+id/fab_add_project"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="110dp"
         android:contentDescription="Nút thêm công việc"
         android:src="@android:drawable/ic_input_add"
         app:backgroundTint="@color/purple_primary"
-        app:layout_anchor="@id/bar"
-        app:layout_anchorGravity="center"
         app:shapeAppearanceOverlay="@style/CircleFAB"
         app:tint="@color/white" />
 
